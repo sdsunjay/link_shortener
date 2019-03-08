@@ -1,7 +1,5 @@
 class ShortenUrlsController < ApplicationController
-before_action :authenticate_user!, except: [:send_to_url]
 before_action :set_url, only: [:show, :edit, :update, :destroy]
-before_action :set_user, except: [:send_to_url]
 
   # GET /urls
   # GET /urls.json
@@ -46,7 +44,6 @@ before_action :set_user, except: [:send_to_url]
   # POST /urls.js
   def create
     @url = ShortenUrl.new(shorten_url_params)
-    @url.user = @user
     if @url.save
       respond_to do |format|
         format.html { redirect_to @url, notice: 'Short URL was successfully created.' }
@@ -85,9 +82,9 @@ before_action :set_user, except: [:send_to_url]
   # DELETE /urls/1
   # DELETE /urls/1.json
   def destroy
-    @url.destroy unless @url.current_user?(@user.id)
+    @url.destroy
     respond_to do |format|
-      format.html { redirect_to user_path(@user) }
+      format.html { redirect_to root_path }
       format.json { head :no_content }
     end
   end
@@ -103,6 +100,16 @@ before_action :set_user, except: [:send_to_url]
         flash[:alert] = 'URL has expired'
         redirect_to '/404'
       end
+    else
+        flash[:alert] = 'URL not found'
+        redirect_to '/404'
+    end
+  end
+
+  def admin_send_to_url
+    if ShortenUrl.where(admin_url: params[:admin_url]).exists?
+      @link = ShortenUrl.where(admin_url: params[:admin_url]).first
+      redirect_to @link
     else
         flash[:alert] = 'URL not found'
         redirect_to '/404'

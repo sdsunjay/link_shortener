@@ -10,7 +10,6 @@ class UrlClickDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     shorten_url_id: Field::Number,
-    user_id: Field::Number,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze
@@ -23,7 +22,6 @@ class UrlClickDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :id,
     :shorten_url_id,
-    :user_id,
     :created_at,
   ].freeze
 
@@ -32,7 +30,6 @@ class UrlClickDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = [
     :id,
     :shorten_url_id,
-    :user_id,
     :created_at,
     :updated_at,
   ].freeze
@@ -42,7 +39,6 @@ class UrlClickDashboard < Administrate::BaseDashboard
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = [
     :shorten_url_id,
-    :user_id,
   ].freeze
 
   # Overwrite this method to customize how url clicks are displayed

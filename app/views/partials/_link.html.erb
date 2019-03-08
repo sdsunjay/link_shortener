@@ -2,12 +2,11 @@
   <p><a href="https://www.quora.com/What-does-it-mean-when-I-am-asked-for-a-valid-URL">What is a valid URL?</a></p>
 <% else %>
   <% if @url.present? %>
-    <h2><%= @url.original_url %> </h2>
-    <h2>Clicks: <%= @url.url_clicks.count %></h2>
-    <h2><%= link_to @url.short, @url.short, target: '_blank' %></h2>
-    <% if @url.current_user?(@user.id) %>
-      <!-- only show admin path if it belongs to us -->
+      <h2>Url: <%= @url.original_url %> </h2>
+      <h2>Clicks: <%= @url.url_clicks.count %></h2>
+      <h2>Status: <%= @url.status.humanize %></h2>
+      <h2>Short Url: <%= link_to @url.short, @url.short, target: '_blank' %></h2>
+      <h2>Admin: <%= link_to @url.short_admin, @url.short_admin, target: '_blank' %></h2>
       <p><%= link_to 'Edit', edit_shorten_url_path(@url), class: 'btn btn-primary' %></p>
-    <% end %>
   <% end %>
 <% end %>
