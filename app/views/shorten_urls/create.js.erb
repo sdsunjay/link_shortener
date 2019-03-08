@@ -1,0 +1,5 @@
+$("#flash").html('<%= j render "partials/alerts" %>').fadeOut(3000);
+$("#link").html("<%= j render partial: 'partials/link', locals: {url: @url} %>");
+
+// clear out form
+$("#shorten_url_original_url").val('');
