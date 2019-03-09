@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :url_clicks, only: [:new, :create, :index, :show, :edit, :update]
   # custom 404
   match "/404" => "errors#error404", via: [ :get, :post, :patch, :delete ]
+  match "/401" => "errors#error401", via: [ :get, :post, :patch, :delete ]
   get '/:short_url', to: 'shorten_urls#send_to_url'
   get '/s/admin/:admin_url', to: 'shorten_urls#admin_send_to_url'
   root to: 'shorten_urls#new'
