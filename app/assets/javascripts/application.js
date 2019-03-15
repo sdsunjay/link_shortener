@@ -14,6 +14,19 @@
 //= require activestorage
 //= require jquery
 //= require bootstrap
+//= require rails.validations
+//= require rails.validations.simple_form
+//= require shorten_urls
 //= require pagy
 //= require turbolinks
 //= require_tree .
+window.ClientSideValidations.callbacks.element.fail = function(element, message, callback) {
+  $('.submit').prop("disabled", true);
+  callback();
+
+};
+window.ClientSideValidations.callbacks.element.pass = function(element, callback) {
+  $('.submit').prop("disabled", false);
+  callback();
+
+};
