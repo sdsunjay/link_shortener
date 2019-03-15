@@ -1,2 +1,7 @@
 $("#flash").html('<%= j render "partials/alerts" %>').fadeOut(3000);
 $("#link").html("<%= j render partial: 'partials/link', locals: {url: @url} %>");
+$("#url_new").submit(function(e) {
+  $(this).resetClientSideValidations();
+  $("#flash").html('<%= j render "partials/alerts" %>').fadeIn(3000);
+});
+$(this).enableClientSideValidations();
