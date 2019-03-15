@@ -12,7 +12,18 @@ module LinkShortener
     config.load_defaults 5.2
     # custom 404
     require Rails.root.join("lib/custom_public_exceptions")
+    # JSON web token
+    require Rails.root.join("lib/json_web_token")
     config.exceptions_app = CustomPublicExceptions.new(Rails.public_path)
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins 'http://localhost:3000'
+        # origins '*'
+        resource '*', headers: :any, methods: [:get, :post, :options]
+      end
+    end
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
