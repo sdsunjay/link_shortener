@@ -61,6 +61,7 @@ group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   # you know, for testing
   gem 'rspec-rails',  '>= 3.6'
+  gem 'rails-controller-testing'
 end
 
 group :development do
@@ -78,6 +79,7 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'chromedriver-helper'
+  gem 'database_cleaner'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
