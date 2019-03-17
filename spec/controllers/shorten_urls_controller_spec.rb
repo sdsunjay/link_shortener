@@ -4,63 +4,62 @@ RSpec.describe ShortenUrlsController, type: :controller do
   context 'GET #new' do
     it 'returns a success response' do
       get :new
-      expect(response).to be_success # response.success?
+      # Use RSpec magic matching
+      expect(response).to be_successful
     end
   end
 
-  context 'POST #create' do
-    let(:cookie) { JWT.decode(JSON.parse(response.body)['token'], key) }
+  context 'GET #admin_send_to_url' do
 
-    it 'returns a JWT with valid claims' do
-      post :create
-      expect(cookie['user_id']).to eq(123)
+    context 'Without valid record' do
+      it 'returns a 401' do
+        get :admin_send_to_url, params: { admin_url: "ts0Jmd" }
+        # Use RSpec magic matching
+        expect(response).to redirect_to '/401'
+      end
+
     end
 
-    context "with valid attributes" do
-      it "creates a new short url" do
-        expect{
-          post :create, contact: Factory.attributes_for(:contact)
-        }.to change(Contact,:count).by(1)
+    context 'With cookie' do
+      it 'returns a 200' do
+        short = ShortenUrl.create(original_url: 'https://google.com')
+        get :admin_send_to_url, params: { admin_url: short.admin_url }
+        expect(assigns(:url)).to eq(short)
+        expect(response).to redirect_to short
+        # expect(response.cookies[:jwt]).to eq(short.id)
       end
 
-      it "redirects to the new contact" do
-        post :create, contact: Factory.attributes_for(:contact)
-        response.should redirect_to Contact.last
-      end
     end
 
-    context "with invalid attributes" do
-      it "does not save the new contact" do
-        expect{
-          post :create, contact: Factory.attributes_for(:invalid_contact)
-        }.to_not change(Contact,:count)
-      end
+  end # close admin_send_to_url
 
-      it "re-renders the new method" do
-        post :create, contact: Factory.attributes_for(:invalid_contact)
-        response.should render_template :new
-      end
-    end
-
-  end
   context 'GET #show' do
-    before(:each) do
-      controller.stub!(:authenticate_request => true)
+
+    context 'Without cookie' do
+      it 'returns a 401' do
+        short = ShortenUrl.create(original_url: 'https://google.com')
+        get :show, params: { id: short.id }
+        expect(response).to redirect_to '/401'
+      end
+
     end
-    it 'returns a success response' do
-      url = ShortenUrl.create(original_url: 'https://google.com', short_url: 'qwe123', admin_url: 'qwe456').save
-      get :show, params: { id: url.to_param }
-      # expect(response.status).to eq(401)
-      # expect(response).to be_success # response.success?
+
+    context 'With cookie' do
+      it 'returns a 200' do
+        short = ShortenUrl.create(original_url: 'https://google.com')
+        get :admin_send_to_url, params: { admin_url: short.admin_url }
+        get :show, params: { id: short.id }
+        expect(response.status).to eq(200)
+      end
     end
-  end
+  end # close #show
+
   context 'GET #edit' do
-    it 'returns a success response' do
-      url = ShortenUrl.create(original_url: 'https://google.com', short_url: 'qwe123', admin_url: 'qwe456')
-      url.save
-      get :edit, params: { id: url.to_param }
-      expect(response).to be_success # response.success?
-    end
-  end
+      it 'Without cookie' do
+        short = ShortenUrl.create(original_url: 'https://google.com')
+        get :edit, params: { id: short.id }
+        expect(response).to redirect_to '/401'
+      end
+  end # close #edit
 
 end
