@@ -12,9 +12,9 @@
     <h2>Status:
       <%= @url.status.humanize %></h2>
     <h2>Short Url:
-      <%= link_to @url.short, @url.short, target: '_blank' %></h2>
+      <%= link_to @url.short, @url.short, target: '_blank', id: "short_url" %></h2>
     <h2>Admin:
-      <%= link_to @url.short_admin, @url.short_admin, target: '_blank' %></h2>
-    <p><%= link_to 'Edit', edit_shorten_url_path(@url), class: 'btn btn-primary' %></p>
+      <%= link_to @url.short_admin, @url.short_admin, target: '_blank', id: "short_admin" %></h2>
+    <%= link_to 'Edit', edit_shorten_url_path(@url), class: 'btn btn-primary', id: 'Edit' %>
   <% end %>
 <% end %>
