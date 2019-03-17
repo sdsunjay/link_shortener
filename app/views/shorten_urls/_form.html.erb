@@ -1,0 +1,7 @@
+<%= simple_form_for(@url, validate: true, url: (@url.new_record? ? shorten_urls_path(@url) : shorten_url_path(@url)), html: { class: 'form-inline', id: 'url_new'}, remote: true, authenticity_token: true) do |f| %>
+  <%= f.error_notification %>
+  <%= f.input :original_url, as: :text, label: false, placeholder: 'Paste a link to shorten it', input_html: { required: true }, error: 'Invalid URL' unless @url.persisted? %>
+  <%= f.input :original_url, as: :text, label: false, disabled: true, placeholder: 'Paste a link to shorten it',  input_html: { required: true }, error: 'Invalid URL' unless @url.new_record? %>
+  <%= f.input :status, label: false, as: :select, prompt: "Select status", collection: ShortenUrl.statuses.keys unless @url.new_record? %>
+  <%= f.button :submit, "Shorten", html: { class: 'btn btn-primary mb-2'} %>
+<% end %>
