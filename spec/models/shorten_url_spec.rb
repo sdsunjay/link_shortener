@@ -82,7 +82,9 @@ RSpec.describe ShortenUrl, type: :model do
       url = described_class.new(original_url: 'http://google.com', short_url:  'zxc123', admin_url: 'zxc456', status: 1).save
       url = described_class.new(original_url: 'http://twitter.com', short_url:  'asd123', admin_url: 'asd456', status: 1).save
     end
-
+    after(:all) do
+        DatabaseCleaner.clean_with(:truncation)
+    end
     it 'should return active short urls' do
       expect(ShortenUrl.active.size).to eq(2)
     end
