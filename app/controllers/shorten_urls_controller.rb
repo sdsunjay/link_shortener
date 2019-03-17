@@ -3,7 +3,6 @@
 # Shorten Urls Controller
 class ShortenUrlsController < ApplicationController
   include ::ActionController::Cookies
-  before_action :set_url, only: %i[show edit update]
   before_action :authenticate_request, only: %i[show edit update]
   before_action :authenticate, only: [:admin_send_to_url]
 
@@ -51,6 +50,8 @@ class ShortenUrlsController < ApplicationController
   def create
     @url = ShortenUrl.new(shorten_url_params)
     if @url.save
+      command = AuthenticateUser.call(@url.admin_url)
+      help_authenticate(command)
       respond_to do |format|
         format.html { redirect_to @url, notice: 'Short URL was successfully created.' }
         format.json { render json: @url, status: :created, location: @url }
@@ -107,7 +108,7 @@ class ShortenUrlsController < ApplicationController
       if @link.active?
         # Create new click
         UrlClick.create!(shorten_url_id: @link.id)
-        redirect_to @link.url
+        redirect_to @link.original_url
       else
         redirect_to '/404', flash: { alert: 'URL has expired' }
       end
@@ -117,38 +118,31 @@ class ShortenUrlsController < ApplicationController
   end
 
   def admin_send_to_url
-    @link = ShortenUrl.where(admin_url: params[:admin_url]).first
-    if @link
-      redirect_to @link
-    else
-      redirect_to '/404', flash: { alert: 'URL not found' }
-    end
+    @url = ShortenUrl.where(admin_url: params[:admin_url]).first
+    redirect_to @url
   end
 
   def authenticate
     command = AuthenticateUser.call(params[:admin_url])
-    # puts command.inspect
+    help_authenticate(command)
+  end
+
+  private
+
+  def help_authenticate(command)
     if command.success?
       # render json: { auth_token: command.result }
       cookies.encrypted[:jwt] = { value: command.result, httponly: true, expires: Time.now + 1.day }
     else
       # render json: { error: command.errors }, status: :unauthorized
-      redirect_to '/401', flash: { alert: command.errors }
+      redirect_to '/401', flash: { alert: command.errors[:authentication].to_sentence }
     end
   end
-
-  private
-
-  # Use callbacks to share common setup or constraints between actions.
-  def set_url
-    @url ||= ShortenUrl.find(params[:id])
-  end
-
   def authenticate_request
     jwt = cookies.encrypted[:jwt]
-    @link = AuthorizeApiRequest.call(jwt).result
-    redirect_to '/401', flash: { alert: 'Not Authorized' } unless @link
-    # render json: { error: 'Not Authorized' }, status: 401 unless @link
+    @url = AuthorizeApiRequest.call(jwt, params[:id]).result
+    redirect_to '/401', flash: { alert: 'Not Authorized' } unless @url
+    # format.json { render json: { error: 'Not Authorized' }, status: 401 unless @link }
   end
 
   # Never trust parameters from the scary internet
