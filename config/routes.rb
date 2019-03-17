@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   resources :shorten_urls, only: [:new, :create, :edit, :update, :show, :destroy]
-  resources :url_clicks, only: [:new, :create]
   # custom 404
   match "/404" => "errors#error404", via: [ :get, :post, :patch, :delete ]
   match "/401" => "errors#error401", via: [ :get, :post, :patch, :delete ]
