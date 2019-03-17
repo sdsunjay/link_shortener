@@ -20,7 +20,7 @@ class AuthenticateUser
     link = ShortenUrl.where(admin_url: @admin_url).first
     return link if link
 
-    errors.add :user_authentication, 'invalid admin url'
+    errors.add :authentication, 'Invalid Admin Url'
     nil
   end
 end
