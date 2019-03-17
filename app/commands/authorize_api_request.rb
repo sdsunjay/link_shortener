@@ -5,8 +5,9 @@ class AuthorizeApiRequest
   include ::ActionController::Cookies
   prepend SimpleCommand
 
-  def initialize(token)
+  def initialize(token, link_id)
     @token = token
+    @link_id = link_id
   end
 
   def call
@@ -16,7 +17,10 @@ class AuthorizeApiRequest
   private
 
   def link
-    @link ||= ShortenUrl.find(decoded_auth_token[:link_id]) if decoded_auth_token
+    decoded_auth_token
+    if (@decoded_auth_token && @decoded_auth_token[:link_id].to_i == @link_id.to_i)
+      @link = ShortenUrl.find(@decoded_auth_token[:link_id])
+    end
     @link || errors.add(:token, 'Invalid token') && nil
   end
 
